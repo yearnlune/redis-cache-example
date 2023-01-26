@@ -1,0 +1,2 @@
+INSERT INTO ot_user(id, name, bio, location, email, homepage, updated_at, created_at, deleted) VALUES ('71d896ed-47e7-4f5c-a85a-2f382d7fb2df', '김동환', '', 'Korea', 'kdhpopoya@gamil.com', 'https://yearnlune.github.io/', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, false)
+INSERT INTO ot_user(id, name, bio, location, email, homepage, updated_at, created_at, deleted) VALUES ('0de34a18-232b-4c5d-8041-2f3c5d9be15d', '홍길동', '신출귀몰', 'Korea', 'hong1600@example.com', '', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, false)
