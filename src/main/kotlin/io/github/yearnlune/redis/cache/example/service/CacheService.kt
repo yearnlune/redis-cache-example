@@ -8,6 +8,7 @@ import io.github.yearnlune.redis.cache.example.logger
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.context.event.EventListener
 import org.springframework.data.redis.core.RedisTemplate
+import org.springframework.data.redis.serializer.RedisSerializer
 import org.springframework.stereotype.Service
 
 @Service
@@ -19,8 +20,20 @@ class CacheService(
     @EventListener
     fun handleAddCache(addCacheEvent: AddCacheEvent) {
         runCatching {
-            redisTemplate?.opsForValue()
-                ?.multiSet(addCacheEvent.values.mapKeys { addCacheEvent.prefix + it.key })
+            pushWithPipeline(addCacheEvent)
+        }
+    }
+
+    fun pushWithPipeline(addCacheEvent: AddCacheEvent) {
+        val key = redisTemplate?.keySerializer as RedisSerializer<String>
+        val value = redisTemplate?.valueSerializer as RedisSerializer<Any>
+        redisTemplate?.executePipelined { connection ->
+            addCacheEvent.values.forEach {
+                connection.stringCommands().mSet(
+                    mapOf(key.serialize(addCacheEvent.prefix + it.key)!! to value.serialize(it.value)!!)
+                )
+                connection.expire(key.serialize(addCacheEvent.prefix + it.key)!!, 30L)
+            }
         }
     }
 

@@ -11,5 +11,5 @@ class UserDTO {
         val location: String,
         val email: String,
         val homepage: String,
-    ): CacheBaseDTO
+    ) : CacheBaseDTO
 }
