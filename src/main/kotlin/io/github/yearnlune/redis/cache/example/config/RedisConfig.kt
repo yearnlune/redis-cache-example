@@ -27,9 +27,7 @@ import java.time.Duration
 @Import(RedisAutoConfiguration::class)
 class RedisConfig {
     var host: String = "redis"
-
     var port: Int = 6379
-
     var password: String? = null
 
     @Bean

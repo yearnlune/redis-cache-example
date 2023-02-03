@@ -34,7 +34,6 @@ class User(
     @CreationTimestamp
     val createdAt: LocalDateTime,
 
-    @Column
     val deleted: Boolean = false
 ) : CacheBase {
 

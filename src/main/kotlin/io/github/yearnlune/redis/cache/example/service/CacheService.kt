@@ -1,5 +1,6 @@
 package io.github.yearnlune.redis.cache.example.service
 
+import io.github.yearnlune.redis.cache.example.config.CacheConfig.Companion.CACHE_TTL
 import io.github.yearnlune.redis.cache.example.domain.dto.CacheBaseDTO
 import io.github.yearnlune.redis.cache.example.domain.entity.CacheBase
 import io.github.yearnlune.redis.cache.example.event.AddCacheEvent
@@ -9,6 +10,7 @@ import org.springframework.context.ApplicationEventPublisher
 import org.springframework.context.event.EventListener
 import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.data.redis.serializer.RedisSerializer
+import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Service
 
 @Service
@@ -17,6 +19,7 @@ class CacheService(
     val redisTemplate: RedisTemplate<String, Any>?
 ) {
 
+    @Async
     @EventListener
     fun handleAddCache(addCacheEvent: AddCacheEvent) {
         runCatching {
@@ -24,19 +27,7 @@ class CacheService(
         }
     }
 
-    fun pushWithPipeline(addCacheEvent: AddCacheEvent) {
-        val key = redisTemplate?.keySerializer as RedisSerializer<String>
-        val value = redisTemplate?.valueSerializer as RedisSerializer<Any>
-        redisTemplate?.executePipelined { connection ->
-            addCacheEvent.values.forEach {
-                connection.stringCommands().mSet(
-                    mapOf(key.serialize(addCacheEvent.prefix + it.key)!! to value.serialize(it.value)!!)
-                )
-                connection.expire(key.serialize(addCacheEvent.prefix + it.key)!!, 30L)
-            }
-        }
-    }
-
+    @Async
     @EventListener
     fun handleEvictCache(evictCacheEvent: EvictCacheEvent) {
         runCatching {
@@ -74,5 +65,18 @@ class CacheService(
                     )
                 }
             }
+    }
+
+    private fun pushWithPipeline(addCacheEvent: AddCacheEvent) {
+        val key = redisTemplate?.keySerializer as RedisSerializer<String>
+        val value = redisTemplate?.valueSerializer as RedisSerializer<Any>
+        redisTemplate?.executePipelined { connection ->
+            addCacheEvent.values.forEach {
+                connection.stringCommands().mSet(
+                    mapOf(key.serialize(addCacheEvent.prefix + it.key)!! to value.serialize(it.value)!!)
+                )
+                connection.expire(key.serialize(addCacheEvent.prefix + it.key)!!, CACHE_TTL)
+            }
+        }
     }
 }

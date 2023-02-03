@@ -24,7 +24,7 @@ spring:
     host: localhost
 logging:
   level:
-    root: info
+    root: INFO
     org.springframework.cache: DEBUG
 cache:
   redis:

@@ -26,6 +26,7 @@ class CacheConfig {
     companion object {
         const val CACHE_PREFIX = "example:"
         const val USER_KEY_PREFIX = "${CACHE_PREFIX}user:summary::"
+        const val CACHE_TTL = 30L
 
         val objectMapper: ObjectMapper = ObjectMapper()
             .registerKotlinModule()
@@ -52,14 +53,12 @@ class CacheConfig {
                 )
             )
             .prefixCacheNameWith(CACHE_PREFIX)
-            .entryTtl(Duration.ofSeconds(30))
+            .entryTtl(Duration.ofSeconds(CACHE_TTL))
 
-        fun redisCacheManager() = RedisCacheManager.RedisCacheManagerBuilder
+        override fun cacheManager(): CacheManager = RedisCacheManager.RedisCacheManagerBuilder
             .fromConnectionFactory(redisConnectionFactory)
             .cacheDefaults(redisCacheConfiguration())
             .build()
-
-        override fun cacheManager(): CacheManager = redisCacheManager()
 
         override fun errorHandler(): CacheErrorHandler {
             return object : CacheErrorHandler {
