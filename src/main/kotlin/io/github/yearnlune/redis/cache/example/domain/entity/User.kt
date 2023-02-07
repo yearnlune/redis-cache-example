@@ -4,6 +4,7 @@ import io.github.yearnlune.redis.cache.example.domain.dto.UserDTO
 import io.github.yearnlune.redis.cache.example.util.UUID36
 import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.UpdateTimestamp
+import org.hibernate.annotations.Where
 import java.time.LocalDateTime
 import javax.persistence.Column
 import javax.persistence.Entity
@@ -12,32 +13,44 @@ import javax.persistence.Table
 
 @Table(name = "OT_USER")
 @Entity
+@Where(clause = "deleted = false")
 class User(
 
     @Id
     @Column(columnDefinition = "char(36)")
     val id: UUID36,
 
-    val name: String,
+    var name: String,
 
-    val bio: String,
+    var bio: String?,
 
-    val location: String,
+    var location: String?,
 
-    val email: String,
+    var email: String,
 
-    val homepage: String,
+    var homepage: String?,
 
     @UpdateTimestamp
-    val updatedAt: LocalDateTime,
+    var updatedAt: LocalDateTime,
 
     @CreationTimestamp
     val createdAt: LocalDateTime,
 
-    val deleted: Boolean = false
+    var deleted: Boolean = false
 ) : CacheBase {
 
-    fun toSummary(): UserDTO.Summary = UserDTO.Summary(id, name, bio, location, email, homepage)
+    fun toSummary(): UserDTO.Summary = UserDTO.Summary(id, name, bio, location, email, homepage, updatedAt)
+
+    fun setWithUserSummary(summary: UserDTO.Summary): User {
+        name = summary.name
+        bio = summary.bio
+        location = summary.location
+        email = summary.email
+        homepage = summary.homepage
+        updatedAt = LocalDateTime.now()
+
+        return this
+    }
 
     override fun toCacheBaseDTO(): UserDTO.Summary = toSummary()
 }
