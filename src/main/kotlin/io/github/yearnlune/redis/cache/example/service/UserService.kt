@@ -33,7 +33,7 @@ class UserService(
         user.deleted = true
     }
 
-    fun findUserSummariesWithUserIds(ids: List<UUID36>) =
+    fun findUserSummariesWithUserIds(ids: Set<UUID36>) =
         cacheService.findCollectionByIdsWithCache(ids, CacheConfig.USER_KEY_PREFIX, userRepository::findUsersByIdIn)
             .filterIsInstance<UserDTO.Summary>()
 }

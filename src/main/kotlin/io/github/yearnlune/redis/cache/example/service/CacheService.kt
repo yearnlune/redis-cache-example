@@ -36,7 +36,7 @@ class CacheService(
     }
 
     fun findCollectionByIdsWithCache(
-        ids: List<String>,
+        ids: Set<String>,
         cachePrefix: String,
         findFunction: (List<String>) -> List<CacheBase>
     ): List<CacheBaseDTO> {

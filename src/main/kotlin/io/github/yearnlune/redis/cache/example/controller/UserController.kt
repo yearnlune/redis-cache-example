@@ -7,14 +7,13 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/users")
 class UserController(
     val userService: UserService
 ) {
@@ -22,8 +21,8 @@ class UserController(
     @GetMapping("/{id}")
     fun findUserSummary(@PathVariable id: UUID36) = ResponseEntity.ok(userService.findUserSummary(id))
 
-    @PostMapping
-    fun findUserSummaries(@RequestBody ids: List<UUID36>) =
+    @GetMapping
+    fun findUserSummaries(@RequestBody ids: Set<UUID36>) =
         ResponseEntity.ok(userService.findUserSummariesWithUserIds(ids))
 
     @PutMapping("/{id}")
