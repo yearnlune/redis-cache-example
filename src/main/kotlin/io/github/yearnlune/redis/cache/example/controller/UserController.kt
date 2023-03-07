@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
@@ -22,7 +23,7 @@ class UserController(
     fun findUserSummary(@PathVariable id: UUID36) = ResponseEntity.ok(userService.findUserSummary(id))
 
     @GetMapping
-    fun findUserSummaries(@RequestBody ids: Set<UUID36>) =
+    fun findUserSummaries(@RequestParam("id") ids: Set<UUID36>) =
         ResponseEntity.ok(userService.findUserSummariesWithUserIds(ids))
 
     @PutMapping("/{id}")
